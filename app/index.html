@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Разработчик под ваши задачи — автоматизация, боты, мини‑сервисы</title>
+    <meta name="description" content="Помогаю быстро решать прикладные задачи: автоматизация процессов, Telegram‑боты, мини‑сервисы, интеграции, скрипты, верстка небольших сайтов. Связь — через Telegram.">
+
+    <link rel="icon" href="logo.jpg" type="image/x-icon">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <style>
+        :root {
+            --line-color: rgba(0, 0, 0, 0.15);
+            --accent-color: #111111;
+            --accent-soft: rgba(17, 17, 17, 0.06);
+            --accent-pill: rgba(17, 17, 17, 0.04);
+            --bg-color: #ffffff;
+            --text-color: #111111;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page {
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Общий фон из тонких линий */
+        .page::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                    linear-gradient(90deg, var(--line-color) 1px, transparent 1px),
+                    linear-gradient(180deg, var(--line-color) 1px, transparent 1px);
+            background-size: 120px 120px, 160px 160px;
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+        }
+
+        .hero-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0, var(--line-color) 20%, var(--line-color) 80%, transparent 100%);
+            opacity: 0;
+            transform: scaleX(0.7);
+            transform-origin: center;
+            transition: opacity 1.2s ease, transform 1.2s ease;
+        }
+
+        .hero-line.visible {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            color: rgba(0, 0, 0, 0.7);
+            max-width: 32rem;
+        }
+
+        .hero-logo-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .hero-logo {
+            max-width: 260px;
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+            object-fit: cover;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.9rem;
+            border-radius: 999px;
+            background-color: var(--accent-pill);
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .hero-pill-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+        }
+
+        .btn-telegram {
+            background-color: #111111;
+            color: #ffffff;
+            border-radius: 999px;
+            padding: 0.75rem 1.75rem;
+            font-size: 0.95rem;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            border: 1px solid #111111;
+            font-weight: 600;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.16);
+            transform: translateY(0);
+            transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-telegram:hover {
+            background-color: #ffffff;
+            color: #111111;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .section {
+            padding: 5rem 0 4rem;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        .icon-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            display: inline-block;
+            margin-right: 0.4rem;
+        }
+
+        .section-illustration {
+            border-radius: 18px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 1.75rem;
+            background:
+                    linear-gradient(135deg, transparent 0, var(--accent-soft) 40%, transparent 80%),
+                    linear-gradient(90deg, var(--line-color) 1px, transparent 1px),
+                    linear-gradient(180deg, var(--line-color) 1px, transparent 1px);
+            background-size: cover, 70px 70px, 80px 80px;
+        }
+
+        .section-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--line-color), transparent);
+            opacity: 0.7;
+            margin: 0 auto;
+        }
+
+        .cta-inline {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed rgba(0, 0, 0, 0.12);
+            text-align: center;
+        }
+
+        .case-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background:
+                    linear-gradient(135deg, var(--accent-soft), transparent),
+                    linear-gradient(90deg, var(--line-color) 1px, transparent 1px);
+            background-size: cover, 12px 12px;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Блок боли */
+        .line-vertical {
+            position: relative;
+            width: 1px;
+            margin-inline: auto;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--line-color), transparent 50%, var(--line-color));
+        }
+
+        .line-vertical::before,
+        .line-vertical::after {
+            content: "";
+            position: absolute;
+            left: -40px;
+            right: -40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--line-color), transparent);
+        }
+
+        .line-vertical::before {
+            top: 20%;
+        }
+
+        .line-vertical::after {
+            bottom: 20%;
+        }
+
+        .problem-list li {
+            margin-bottom: 0.75rem;
+        }
+
+        .problem-item {
+            padding: 0.6rem 0.9rem;
+            border-radius: 999px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Карточки решений */
+        .solution-card {
+            border-radius: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 1.5rem 1.5rem 1.75rem;
+            background: rgba(255, 255, 255, 0.9);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .solution-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(0, 0, 0, 0.08) 50%, transparent 60%);
+            opacity: 0.6;
+            mix-blend-mode: multiply;
+            pointer-events: none;
+            mask-image: linear-gradient(to bottom, transparent, #000 20%, #000 80%, transparent);
+        }
+
+        .solution-card-title {
+            position: relative;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+        }
+
+        .solution-card-desc {
+            position: relative;
+            font-size: 0.9rem;
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        /* Trust / компетенции */
+        .trust-grid {
+            position: relative;
+            padding: 2.5rem 1.5rem;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .trust-grid::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                    linear-gradient(90deg, var(--line-color) 1px, transparent 1px),
+                    linear-gradient(180deg, var(--line-color) 1px, transparent 1px);
+            background-size: 80px 80px, 80px 80px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .trust-item {
+            position: relative;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.9rem;
+            border-radius: 999px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(2px);
+        }
+
+        /* Process */
+        .process-step {
+            border-radius: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 1.5rem 1.5rem 1.4rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .process-step::before {
+            content: "";
+            position: absolute;
+            inset-inline: 0;
+            top: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--line-color), transparent);
+        }
+
+        .process-step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            border: 1px solid rgba(0, 0, 0, 0.4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            margin-bottom: 0.6rem;
+        }
+
+        /* Contacts */
+        .contacts-section {
+            padding-top: 4rem;
+            padding-bottom: 5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .contacts-title {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .contact-link {
+            font-size: 0.95rem;
+            color: rgba(0, 0, 0, 0.8);
+        }
+
+        .contact-link a {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 3px;
+        }
+
+        /* Анимации появления */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 767.98px) {
+            body {
+                font-size: 16px;
+            }
+
+            .hero {
+                text-align: center;
+            }
+
+            .hero-subtitle {
+                margin-inline: auto;
+            }
+
+            .hero-logo-wrapper {
+                justify-content: center;
+                margin-top: 2rem;
+            }
+
+            .btn-telegram {
+                width: 80%;
+                justify-content: center;
+            }
+
+            .page::before {
+                opacity: 0.18;
+                background-size: 160px 160px, 200px 200px;
+            }
+
+            .trust-grid::before {
+                opacity: 0.35;
+                background-size: 110px 110px, 110px 110px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <!-- Hero / Attention -->
+    <header class="hero">
+        <div class="hero-line" id="hero-line"></div>
+        <div class="container">
+            <div class="row align-items-center gy-5">
+                <div class="col-lg-6">
+                    <div class="hero-pill reveal">
+                        <span class="hero-pill-dot"></span>
+                        <span>Автоматизация, боты и мини‑сервисы под задачу</span>
+                    </div>
+                    <p class="section-label mb-2">Разработчик под конкретные запросы</p>
+                    <h1 class="hero-title mb-3 reveal">
+                        Разрабатываю решения под ваши задачи
+                    </h1>
+                    <p class="hero-subtitle mb-4 reveal">
+                        Скрипты, боты, мини‑сервисы и интеграции — быстро, без бюрократии, с фокусом на результат. Помогаю бизнесу экономить время, автоматизировать процессы и уменьшать ручную рутину.
+                    </p>
+                    <div class="d-flex flex-wrap align-items-center gap-3 reveal">
+                        <a href="https://t.me/justwriteonly" target="_blank" rel="noopener" class="btn btn-telegram d-inline-flex align-items-center">
+                            Написать в Telegram
+                        </a>
+                        <span class="text-muted" style="font-size: 0.85rem;">
+                            Кратко опишите задачу — отвечу и предложу решение.
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-5 offset-lg-1">
+                    <div class="hero-logo-wrapper reveal">
+                        <img src="logo.jpg" alt="Логотип с абстрактными линиями" class="hero-logo">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Блок боли (Problem) -->
+    <section class="section" id="problem">
+        <div class="container">
+            <div class="row align-items-stretch gy-4">
+                <div class="col-md-3 d-none d-md-flex justify-content-center">
+                    <div class="line-vertical reveal"></div>
+                </div>
+                <div class="col-md-9">
+                    <div class="reveal mb-3">
+                        <p class="section-label mb-2">С чем часто приходят</p>
+                        <h2 class="section-title mb-2">Когда нужен разработчик «под задачу»</h2>
+                    </div>
+                    <ul class="problem-list list-unstyled mt-2 reveal">
+                        <li class="problem-item"><span class="icon-dot"></span>Нет разработчика, чтобы быстро что-то сделать.</li>
+                        <li class="problem-item"><span class="icon-dot"></span>Процессы занимают слишком много ручного труда.</li>
+                        <li class="problem-item"><span class="icon-dot"></span>Нужно связать сервисы, API или CRM.</li>
+                        <li class="problem-item"><span class="icon-dot"></span>Хочу бота или мини‑сервис, но непонятно, с чего начать.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="cta-inline reveal">
+                <p class="mb-3 text-muted">Узнали себя? Просто напишите пару фраз в Telegram.</p>
+                <a href="https://t.me/justwriteonly" target="_blank" rel="noopener" class="btn btn-telegram">
+                    Обсудить задачу в Telegram
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Блок решения (Solution) -->
+    <section class="section" id="solution">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-lg-8 reveal">
+                    <p class="section-label mb-2">Как я могу помочь</p>
+                    <h2 class="section-title mb-0">Из задачи — в работающий инструмент</h2>
+                </div>
+                <div class="col-lg-4 d-none d-lg-block">
+                    <div class="section-illustration reveal">
+                        <small class="text-muted">Каждое решение собирается под конкретный процесс: от одноразового скрипта до мини‑сервиса.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-3 g-lg-4">
+                <div class="col-md-6 col-lg-4 reveal">
+                    <div class="solution-card h-100">
+                        <div class="solution-card-title">Написание Telegram‑ботов</div>
+                        <div class="solution-card-desc">
+                            Внутренние и клиентские боты, уведомления, заявки, бронирования.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 reveal">
+                    <div class="solution-card h-100">
+                        <div class="solution-card-title">Автоматизация внутренних процессов</div>
+                        <div class="solution-card-desc">
+                            Сбор данных, отчёты, напоминания, проверки — меньше ручной рутины.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 reveal">
+                    <div class="solution-card h-100">
+                        <div class="solution-card-title">Интеграции с CRM и API</div>
+                        <div class="solution-card-desc">
+                            Связь между CRM, формами, таблицами и сторонними API.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 reveal">
+                    <div class="solution-card h-100">
+                        <div class="solution-card-title">Мини‑сервисы и скрипты</div>
+                        <div class="solution-card-desc">
+                            Небольшие веб‑сервисы и скрипты под ваш конкретный сценарий.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 reveal">
+                    <div class="solution-card h-100">
+                        <div class="solution-card-title">Верстка небольших сайтов</div>
+                        <div class="solution-card-desc">
+                            Лэндинги и страницы с формами — без тяжёлых фреймворков.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 reveal">
+                    <div class="solution-card h-100">
+                        <div class="solution-card-title">Хостинг и DevOps‑мелочи</div>
+                        <div class="solution-card-desc">
+                            Развёртывание бота или сервиса, базовая настройка окружения.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-inline reveal">
+                <p class="mb-3 text-muted">Можно описать задачу в свободной форме — я предложу формат решения и примерный объём работ.</p>
+                <a href="https://t.me/justwriteonly" target="_blank" rel="noopener" class="btn btn-telegram">
+                    Получить предложение в Telegram
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Примеры работ -->
+    <section class="section" id="cases">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-lg-8 reveal">
+                    <p class="section-label mb-2">Примеры задач</p>
+                    <h2 class="section-title mb-2">Прикладные решения под бизнес‑процессы</h2>
+                    <p class="text-muted mb-0">
+                        Ниже — три реальных сценария, где было важно встроить решение в существующую работу команды.
+                    </p>
+                </div>
+            </div>
+            <div class="row g-3 g-lg-4">
+                <div class="col-md-6 col-lg-4 reveal">
+                    <div class="solution-card h-100">
+                        <div class="solution-card-title">Автоматизация платежей в Telegram</div>
+                        <div class="solution-card-desc">
+                            <strong>Задача:</strong> убрать ручной учёт платежей и балансов в таблицах.<br>
+                            <strong>Решение:</strong> бот, связанный с Google‑таблицами, который фиксирует платежи и статусы.<br>
+                            <strong>Результат:</strong> меньше ошибок и быстрее закрываются финансовые операции.<br>
+                            <strong>Стек:</strong> Python, Telegram Bot API, Google Sheets API.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 reveal">
+                    <div class="solution-card h-100">
+                        <div class="solution-card-title">Клиентский бот с видео‑контентом</div>
+                        <div class="solution-card-desc">
+                            <strong>Задача:</strong> удобно отправлять клиентам обучающие видео и сохранять историю.<br>
+                            <strong>Решение:</strong> бот с загрузкой, хранением и структурированием контента в базе.<br>
+                            <strong>Результат:</strong> клиенты получают нужные материалы за пару кликов, менеджеры не теряют ссылки.<br>
+                            <strong>Стек:</strong> Python, Telegram Bot API, база данных.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 reveal">
+                    <div class="solution-card h-100">
+                        <div class="solution-card-title">Внутренний веб‑сервис для заказов</div>
+                        <div class="solution-card-desc">
+                            <strong>Задача:</strong> ускорить оформление заказов без участия разработчика.<br>
+                            <strong>Решение:</strong> простой веб‑интерфейс для менеджеров с корзинами и оформлением.<br>
+                            <strong>Результат:</strong> меньше узких мест, заказы собираются быстрее и без лишних обращений к техкоманде.<br>
+                            <strong>Стек:</strong> Python, FastAPI, лёгкий frontend.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-inline reveal">
+                <p class="mb-3 text-muted">Есть похожая задача или что‑то рядом — можно опираясь на эти примеры собрать решение под ваш процесс.</p>
+                <a href="https://t.me/justwriteonly" target="_blank" rel="noopener" class="btn btn-telegram">
+                    Написать по своему кейсу
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подтверждение компетенции (Trust) -->
+    <section class="section" id="trust">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 mb-4 mb-lg-0 reveal">
+                    <p class="section-label mb-2">Технологии и опыт</p>
+                    <h2 class="section-title mb-3">Не только написать код, но и внедрить</h2>
+                    <p class="text-muted mb-0">
+                        Работаю со стеками, которые быстро внедряются и надёжно работают в проде. Ориентируюсь на практичные инструменты и простое развёртывание.
+                    </p>
+                </div>
+                <div class="col-lg-7">
+                    <div class="trust-grid reveal">
+                        <div class="row g-2 g-md-3">
+                            <div class="col-6 col-md-4">
+                                <div class="trust-item">Python + FastAPI</div>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="trust-item">JavaScript</div>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="trust-item">Telegram API</div>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="trust-item">Интеграции и веб‑хуки</div>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="trust-item">Опыт реальных заказов</div>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="trust-item">Быстрая связь и итерации</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-inline reveal">
+                <p class="mb-3 text-muted">Кратко расскажите, на каком стеке или в каких сервисах вы сейчас живёте — предложу аккуратную интеграцию.</p>
+                <a href="https://t.me/justwriteonly" target="_blank" rel="noopener" class="btn btn-telegram">
+                    Обсудить технические детали
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Почему со мной удобно -->
+    <section class="section" id="why-me">
+        <div class="container">
+            <div class="row align-items-center gy-4">
+                <div class="col-lg-6 reveal">
+                    <p class="section-label mb-2">Формат работы</p>
+                    <h2 class="section-title mb-3">Почему со мной удобно</h2>
+                    <ul class="problem-list list-unstyled mb-0">
+                        <li><span class="icon-dot"></span>Быстро включаюсь в задачу.</li>
+                        <li><span class="icon-dot"></span>Говорю человеческим языком, без лишнего техспика.</li>
+                        <li><span class="icon-dot"></span>Показываю промежуточные результаты, чтобы сверяться по ходу.</li>
+                        <li><span class="icon-dot"></span>Подстраиваю решение под ваш текущий процесс.</li>
+                        <li><span class="icon-dot"></span>Даю поддержку после сдачи, чтобы всё стабильно работало.</li>
+                    </ul>
+                </div>
+                <div class="col-lg-5 offset-lg-1 d-none d-lg-block">
+                    <div class="section-illustration reveal">
+                        <small class="text-muted">
+                            За последние проекты собрал несколько прикладных решений под конкретные задачи бизнеса — от ботов до внутренних сервисов.
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-inline reveal">
+                <p class="mb-3 text-muted">Если важны скорость, прозрачность и минимальная бюрократия — можно начать с небольшой пилотной задачи.</p>
+                <a href="https://t.me/justwriteonly" target="_blank" rel="noopener" class="btn btn-telegram">
+                    Предложить пилот в Telegram
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Как я работаю (Process) -->
+    <section class="section" id="process">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-lg-8 reveal">
+                    <p class="section-label mb-2">Процесс</p>
+                    <h2 class="section-title mb-2">Простой цикл от описания до результата</h2>
+                    <p class="text-muted mb-0">
+                        Достаточно короткого сообщения в Telegram, дальше двигаемся по шагам.
+                    </p>
+                </div>
+            </div>
+            <div class="row g-3 g-lg-4">
+                <div class="col-md-6 col-lg-3 reveal">
+                    <div class="process-step h-100">
+                        <div class="process-step-number">1</div>
+                        <div class="fw-semibold mb-1">Описываете задачу</div>
+                        <div class="text-muted" style="font-size: 0.9rem;">
+                            Пишете в Telegram, что хотите автоматизировать или сделать.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 reveal">
+                    <div class="process-step h-100">
+                        <div class="process-step-number">2</div>
+                        <div class="fw-semibold mb-1">Предлагаю решение</div>
+                        <div class="text-muted" style="font-size: 0.9rem;">
+                            Формулирую подход, стек и примерные сроки.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 reveal">
+                    <div class="process-step h-100">
+                        <div class="process-step-number">3</div>
+                        <div class="fw-semibold mb-1">Реализую автоматизацию или бота</div>
+                        <div class="text-muted" style="font-size: 0.9rem;">
+                            Реализую решение и показываю промежуточные результаты.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 reveal">
+                    <div class="process-step h-100">
+                        <div class="process-step-number">4</div>
+                        <div class="fw-semibold mb-1">Передаю и сопровождаю</div>
+                        <div class="text-muted" style="font-size: 0.9rem;">
+                            Разворачиваем решение и договариваемся о сопровождении.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-inline reveal">
+                <p class="mb-3 text-muted">Можно начать с небольшого описания задачи — дальше я предложу формат работы и шаги.</p>
+                <a href="https://t.me/justwriteonly" target="_blank" rel="noopener" class="btn btn-telegram">
+                    Начать с описания в Telegram
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Контакты (Final CTA) -->
+    <section class="contacts-section" id="contacts">
+        <div class="container">
+            <div class="row justify-content-between align-items-center gy-4">
+                <div class="col-lg-7 reveal">
+                    <h2 class="contacts-title">Готов обсудить вашу задачу</h2>
+                    <p class="text-muted mb-3">
+                        Напишите пару абзацев о том, что хотите автоматизировать и какого результата ждёте.
+                    </p>
+                    <a href="https://t.me/justwriteonly" target="_blank" rel="noopener" class="btn btn-telegram d-inline-flex align-items-center mb-3">
+                        Написать в Telegram
+                    </a>
+                    <div class="d-flex flex-column gap-1">
+                        <div class="contact-link">
+                            Telegram: <a href="https://t.me/justwriteonly" target="_blank" rel="noopener">@justwriteonly</a>
+                        </div>
+                        <div class="contact-link">
+                            Email: <a href="mailto:you@example.com">roamory@mail.ru</a>
+                        </div>
+                        <div class="contact-link text-muted">
+                            Предпочтительное время для связи: будни, 10:00–19:00 (по вашему времени).
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 reveal">
+                    <p class="section-label mb-2">Что можно приложить в первом сообщении</p>
+                    <ul class="list-unstyled mb-0" style="font-size: 0.9rem;">
+                        <li>— 1–3 примера того, как вы сейчас решаете задачу.</li>
+                        <li>— Скриншоты, ссылки на сервисы или таблицы.</li>
+                        <li>— Пожелания по срокам и бюджету.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Bootstrap JS (для возможных компонентов) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+<script>
+    // Анимации появления блоков при скролле
+    const revealElements = document.querySelectorAll('.reveal');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.2
+    });
+
+    revealElements.forEach(el => observer.observe(el));
+
+    // Плавное появление линии на первом экране
+    window.addEventListener('load', () => {
+        const line = document.getElementById('hero-line');
+        if (line) {
+            requestAnimationFrame(() => {
+                line.classList.add('visible');
+            });
+        }
+    });
+</script>
+</body>
+</html>
