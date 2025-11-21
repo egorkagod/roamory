@@ -13,6 +13,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Копируем статический сайт
 COPY index.html /usr/share/nginx/html/index.html
+COPY logo.jpg /usr/share/nginx/html/logo.jpg
 
 # Webroot (на случай использования webroot-плагина)
 RUN mkdir -p /var/www/certbot
